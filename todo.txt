@@ -1,0 +1,41 @@
+- Start page
+    - need to think through what this would even be
+- Exercise list page
+    - show statistics on the page
+    - make this look good
+    x allow edit via modal
+    x button to add new
+    x don't show the full list by default (pagination?)
+- Exercise page
+    - show PRs/max effort
+    x don't allow delete/update from this page? not the main function of the page, at least
+    x show all lifts for the exercise
+    x allow sort
+- Workout list page
+    - make this look good
+    o show some basic info on the page
+        - could still use some work, set count, duration, etc
+    x sort mechanism
+    x button to add new
+    x don't show the full list by default
+- Workout lifts page
+    - we shouldn't be able to go to an old workout and start making changes
+    - Add Lift
+        - add lift should have some spacing and not look so bad
+        - exercise selection should not push down the rest of the dialog
+        - move description to its own line
+        x add lift should remember your last lift
+        x be nice to pop a dialog instead of a new page
+    - Some way to collapse exercises so the page doesn't scroll down infinitely
+        - kind of addressed this with pagination, but considering collpasing by exercise isnt a bad idea
+    x from a lift should be able to go to exercise
+    x Should be able to delete a lift
+    x Should be able to copy a lift
+    x fix the datetime formatting
+    x Edit Lift
+        x edit lift should allow...editing
+        x edit lift should always show the comment field
+- Nav bar
+    - Fix spacing/visibility issues with certain buttons
+    - start new workout should immediately jump to its
+    x continue most recent
