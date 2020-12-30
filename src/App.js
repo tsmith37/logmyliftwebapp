@@ -13,6 +13,8 @@ import { WorkoutModal } from './components/workout-modal.component';
 import LiftList from './components/lift-list.component';
 import MostRecentWorkoutRedirect from './components/most-recent-workout-redirect.component';
 
+require('dotenv').config()
+
 class App extends Component {
 	constructor(props) {
 		super(props);

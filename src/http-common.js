@@ -1,9 +1,8 @@
 import axios from 'axios';
 
-var base_url = (process.env.API_URL ? process.env.API_URL : "http://localhost:8080/api");
-console.log(base_url);
+console.log(process.env.REACT_APP_API_URL);
 export default axios.create({
-	baseURL: base_url,
+	baseURL: process.env.REACT_APP_API_URL,
 	headers: {
 		"Content-type": "application/json"
 	}
