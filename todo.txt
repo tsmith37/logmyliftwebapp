@@ -27,7 +27,7 @@
         x add lift should remember your last lift
         x be nice to pop a dialog instead of a new page
     - Some way to collapse exercises so the page doesn't scroll down infinitely
-        - kind of addressed this with pagination, but considering collpasing by exercise isnt a bad idea
+        - kind of addressed this with pagination, but considering collapsing by exercise isnt a bad idea
     x from a lift should be able to go to exercise
     x Should be able to delete a lift
     x Should be able to copy a lift
@@ -37,5 +37,11 @@
         x edit lift should always show the comment field
 - Nav bar
     - Fix spacing/visibility issues with certain buttons
-    - start new workout should immediately jump to its
+    - start new workout should immediately jump to it
     x continue most recent
+- Maxes
+    - figure out when to populate this table
+    - determine if the columns in this table are really needed
+    - some way to build out different training schemes would be cool
+        - i.e., you can go in and program max % and reps for nsuns, 
+            then when you go to your workout it should suggest the next set based on training max, %, and rep range

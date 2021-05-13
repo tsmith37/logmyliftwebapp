@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ExerciseSelector } from './exercise-selector.component';
-import { Button, InputGroup, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { InputGroupAddon,InputGroupText, Button, InputGroup, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import LiftDataService from '../services/lift.service';
 
 export class LiftModal extends Component 
@@ -178,14 +178,28 @@ export class LiftModal extends Component
 				isOpen={this.props.isModalOpen}
 				toggle={this.props.toggle}>
 				<ModalHeader toggle={this.props.toggle}>{this.props.modalPrompt}</ModalHeader>
-				<ModalBody>
+				<ModalBody> 
           <ExerciseSelector getInputData={this.setExerciseId} defaultExerciseId={this.state.exerciseId}/>
-					<InputGroup>     
-						<Input placeholder="Weight" min={0} max={9999} type="number" step="5" onChange={(e) => this.setWeight(`${e.target.value}`)} value={this.state.weight}/>
-						<Input placeholder="Reps" min={0} max={9999} type="number" step="1" onChange={(e) => this.setReps(`${e.target.value}`)} value={this.state.reps}/>
-						<Input placeholder="Description" onChange={(e) => this.setDescription(`${e.target.value}`)} value={this.state.description}/>
-            		</InputGroup>
-					<p>{this.state.message}</p>
+          <br />
+					<InputGroup>
+            <Input placeholder="Weight" min={0} max={9999} type="number" step="5" onChange={(e) => this.setWeight(`${e.target.value}`)} value={this.state.weight}/>
+            <InputGroupAddon addonType="append">
+              <InputGroupText>lbs</InputGroupText>
+            </InputGroupAddon>
+          </InputGroup>
+          <br />
+          <InputGroup>
+            <Input placeholder="Reps" min={0} max={9999} type="number" step="1" onChange={(e) => this.setReps(`${e.target.value}`)} value={this.state.reps}/>
+            <InputGroupAddon addonType="append">
+              <InputGroupText>reps</InputGroupText>
+            </InputGroupAddon>
+          </InputGroup>
+          <br />
+          <InputGroup>
+            <Input placeholder="Description" onChange={(e) => this.setDescription(`${e.target.value}`)} value={this.state.description}/>
+          </InputGroup>
+          <br />
+          <p>{this.state.message}</p>
 				</ModalBody>
 				<ModalFooter>
 					<Button color='primary' onClick={() => this.execute()}>OK</Button>{' '}

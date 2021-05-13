@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import WorkoutDataService from '../services/workout.service';
 import { Link } from 'react-router-dom';
-import { Button, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Table } from 'reactstrap'
+import { Button, Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Table } from 'reactstrap'
 import { WorkoutModal } from './workout-modal.component';
 import JwPagination from 'jw-react-pagination';
 
@@ -13,9 +13,7 @@ export default class WorkoutList extends Component {
 		this.refreshList = this.refreshList.bind(this);
 		this.setActiveWorkout = this.setActiveWorkout.bind(this);
 		this.onChangePage = this.onChangePage.bind(this);
-		this.toggleAddWorkoutModal = this.toggleAddWorkoutModal.bind(this);
 		this.toggleEditWorkoutModal = this.toggleEditWorkoutModal.bind(this);
-		this.closeAddWorkoutModalAndRefresh = this.closeAddWorkoutModalAndRefresh.bind(this);
 		this.closeEditWorkoutModalAndRefresh = this.closeEditWorkoutModalAndRefresh.bind(this);
 		this.selectNewToOldSort = this.selectNewToOldSort.bind(this);
 		this.selectOldToNewSort = this.selectOldToNewSort.bind(this);
@@ -49,27 +47,12 @@ export default class WorkoutList extends Component {
 		});
 	}
 
-	toggleAddWorkoutModal() {
-		this.setState({
-			showAddWorkoutModal: !this.state.showAddWorkoutModal
-		});
-
-		document.querySelector('body').classList.remove('modal-open');
-	}
-
 	toggleEditWorkoutModal() {
 		this.setState({
 			showEditWorkoutModal: !this.state.showEditWorkoutModal
 		});
 
 		document.querySelector('body').classList.remove('modal-open');
-	}
-
-	closeAddWorkoutModalAndRefresh() {
-		this.setState({
-			showAddWorkoutModal: false
-		});
-		this.refreshList();
 	}
 
 	closeEditWorkoutModalAndRefresh() {
@@ -147,18 +130,19 @@ export default class WorkoutList extends Component {
 				<div>
 					<h4>Workout List</h4>
 				</div>
-				<div className="row">
-					<div className="col-sm-7">
-						<input
+				<Container>
+					<Row>
+						<Col xs="auto">
+							<input
 								type="text"
 								className="form-control"
 								placeholder="Search by description"
 								value={searchDescription}
 								onChange={this.onChangeSearchDescription}
 							/>
-					</div>
-					<div className="col-sm-2">
-						<Dropdown isOpen={this.state.sortDropdownOpen} toggle={this.toggleSortDropdown}>
+						</Col>
+						<Col xs="1">
+							<Dropdown isOpen={this.state.sortDropdownOpen} toggle={this.toggleSortDropdown}>
 							<DropdownToggle caret>
 								Sort
 							</DropdownToggle>
@@ -166,19 +150,10 @@ export default class WorkoutList extends Component {
 								<DropdownItem onClick={this.selectNewToOldSort}>Newest to oldest</DropdownItem>
 								<DropdownItem onClick={this.selectOldToNewSort}>Oldest to newest</DropdownItem>
 							</DropdownMenu>
-						</Dropdown>
-					</div>	
-					<div className="col-sm-1">
-						<Button color="primary" href="/continue-workout">
-							Continue
-						</Button>
-					</div>
-					<div className="col-sm-1">
-						<Button color="primary" onClick={this.toggleAddWorkoutModal}>
-							Add
-						</Button>
-					</div>
-				</div>		
+							</Dropdown>
+						</Col>
+					</Row>
+				</Container>	
 				<WorkoutModal 
 					isModalOpen={this.state.showEditWorkoutModal} 
 					modalTitle="Edit Workout"
@@ -187,13 +162,6 @@ export default class WorkoutList extends Component {
 					workout={this.state.currentWorkout}
 					onComplete={this.closeEditWorkoutModalAndRefresh}
 					key={"edit" + (this.state.currentWorkout ? this.state.currentWorkout.id : 0)}/>	
-				<WorkoutModal 
-					isModalOpen={this.state.showAddWorkoutModal} 
-					modalTitle="Add Workout"
-					modalPrompt="Create"
-					toggle={this.toggleAddWorkoutModal} 
-					onComplete={this.closeAddWorkoutModalAndRefresh}
-					key={-1}/>	
 				<Table hover>
 					<thead>
 						<tr>

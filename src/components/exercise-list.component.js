@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ExerciseDataService from '../services/exercise.service';
 import { Link } from 'react-router-dom';
-import { Button, Table } from 'reactstrap'
+import { Button, Col, Container, Row, Table } from 'reactstrap'
 import { ExerciseModal } from './exercise-modal.component';
 import JwPagination from 'jw-react-pagination';
 
@@ -129,22 +129,24 @@ export default class ExerciseList extends Component {
 				<div>
 					<h4>Exercise List</h4>
 				</div>
-				<div className="row">
-					<div className="col-sm-10">
-						<input
-							type="text"
-							className="form-control"
-							placeholder="Search by name"
-							value={searchName}
-							onChange={this.onChangeSearchName}
-						/>
-					</div>
-					<div className="col-sm-1">
-						<Button color="primary" onClick={this.toggleAddExerciseModal}>
-							Add
-						</Button>
-					</div>
-				</div>
+				<Container>
+					<Row>
+						<Col xs="auto">
+							<input
+								type="text"
+								className="form-control"
+								placeholder="Search by name"
+								value={searchName}
+								onChange={this.onChangeSearchName}
+							/>
+						</Col>
+						<Col xs="1">
+							<Button color="primary" onClick={this.toggleAddExerciseModal}>
+								Add
+							</Button>
+						</Col>
+					</Row>
+				</Container>
 				<ExerciseModal 
 					isModalOpen={this.state.showAddExerciseModal} 
 					modalPrompt="Create"

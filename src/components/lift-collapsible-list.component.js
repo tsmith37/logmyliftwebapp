@@ -4,16 +4,16 @@ import LiftDataService from '../services/lift.service';
 import WorkoutDataService from '../services/workout.service';
 import { Button, Col, Container, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Row, Table } from 'reactstrap';
 import { LiftModal } from './lift-modal.component';
-import { DeleteLiftModal } from './delete-lift-modal.component';
-import JwPagination from 'jw-react-pagination';
+import { LiftOptionsModal } from './lift-options-modal.component';
 
-export default class LiftList extends Component {
+export default class LiftCollapsible extends Component {
 	constructor(props) {
 		super(props);
 		this.retrieveLifts = this.retrieveLifts.bind(this);
 		this.retrieveWorkout = this.retrieveWorkout.bind(this);
 		this.refreshList = this.refreshList.bind(this);
 		this.setActiveLift = this.setActiveLift.bind(this);
+		this.getGroupedLifts = this.getGroupedLifts.bind(this);
 		this.selectNewToOldSort = this.selectNewToOldSort.bind(this);
 		this.selectOldToNewSort = this.selectOldToNewSort.bind(this);
 		this.selectHeaviestSort = this.selectHeaviestSort.bind(this);
@@ -21,30 +21,23 @@ export default class LiftList extends Component {
 		this.selectSortIfNotAlreadySorted = this.selectSortIfNotAlreadySorted.bind(this);
 		this.toggleSortDropdown = this.toggleSortDropdown.bind(this);
 		this.toggleAddLiftModal = this.toggleAddLiftModal.bind(this);
-		this.toggleCopyLiftModal = this.toggleCopyLiftModal.bind(this);
-		this.toggleEditLiftModal = this.toggleEditLiftModal.bind(this);
-		this.toggleDeleteLiftModal = this.toggleDeleteLiftModal.bind(this);
+		this.toggleLiftOptionsModal = this.toggleLiftOptionsModal.bind(this);
 		this.closeAddLiftModalAndRefresh = this.closeAddLiftModalAndRefresh.bind(this);
-		this.closeCopyLiftModalAndRefresh = this.closeCopyLiftModalAndRefresh.bind(this);
-		this.closeEditLiftModalAndRefresh = this.closeEditLiftModalAndRefresh.bind(this);
-		this.closeDeleteLiftModalAndRefresh = this.closeDeleteLiftModalAndRefresh.bind(this);
-		this.onChangePage = this.onChangePage.bind(this);
+		this.closeAllModalsAndRefresh = this.closeAllModalsAndRefresh.bind(this);
 		
 		this.state = {
 			workout_id: this.props.match.params.id,
 			workoutDescription: '',
 			workoutStartTime: null,
 			lifts: [],
-			pageOfLifts: [],
 			sortBy: 'createdAt',
 			sortDir: 'DESC',
 			currentLift: null,
 			currentIndex: -1,
 			sortDropdownOpen: false,
 			showAddLiftModal: false,
-			showCopyLiftModal: false,
-			showEditLiftModal: false,
-			showDeleteLiftModal: false
+			showLiftOptionsModal: false,
+			expandedRows: []
 		};
 	}
 
@@ -91,25 +84,11 @@ export default class LiftList extends Component {
 		document.querySelector('body').classList.remove('modal-open');
 	}
 
-	toggleCopyLiftModal() {
+	toggleLiftOptionsModal(lift, index) {
 		this.setState({
-			showCopyLiftModal: !this.state.showCopyLiftModal
-		});
-
-		document.querySelector('body').classList.remove('modal-open');
-	}
-
-	toggleEditLiftModal() {
-		this.setState({
-			showEditLiftModal: !this.state.showEditLiftModal
-		});
-
-		document.querySelector('body').classList.remove('modal-open');
-	}
-
-	toggleDeleteLiftModal() {
-		this.setState({
-			showDeleteLiftModal: !this.state.showDeleteLiftModal
+			currentLift: lift,
+			currentIndex: index,
+			showLiftOptionsModal: !this.state.showLiftOptionsModal
 		});
 
 		document.querySelector('body').classList.remove('modal-open');
@@ -122,34 +101,13 @@ export default class LiftList extends Component {
 		this.refreshList();
 	}
 
-	closeEditLiftModalAndRefresh() {
+	closeAllModalsAndRefresh(){
 		this.setState({
-			showEditLiftModal: false
+			showAddLiftModal: false,
+			showLiftOptionsModal: false
 		});
 		this.refreshList();
 	}
-
-	closeCopyLiftModalAndRefresh() {
-		this.setState({
-			showCopyLiftModal: false
-		});
-		this.refreshList();
-	}
-
-	closeDeleteLiftModalAndRefresh() {
-		this.setState({
-			showDeleteLiftModal: false
-		});
-		this.refreshList();
-	}
-
-	onChangePage(ex) {
-        this.setState({ 
-			pageOfLifts: ex,
-			currentLift: null,
-			currentIndex: -1
-		});
-    }
 
 	componentDidMount() {
 		this.retrieveWorkout();
@@ -175,6 +133,7 @@ export default class LiftList extends Component {
 				this.setState({
 					lifts: response.data
 				});
+				this.getGroupedLifts();
 			})
 			.catch(e => {
 				console.log(e);
@@ -196,10 +155,72 @@ export default class LiftList extends Component {
 		});
 	}
 
+	handleRowClick(exerciseName)
+	{
+		const currentExpandedRows = this.state.expandedRows;
+        const isRowCurrentlyExpanded = currentExpandedRows.includes(exerciseName);
+        
+        const newExpandedRows = isRowCurrentlyExpanded ? 
+			currentExpandedRows.filter(id => id !== exerciseName) : 
+			currentExpandedRows.concat(exerciseName);
+        
+        this.setState({expandedRows : newExpandedRows});
+	}
+
+	renderExercise(exercise) {
+        const clickCallback = () => this.handleRowClick(exercise.exerciseName);
+        const itemRows = [
+			<tr onClick={clickCallback} key={"row-data-" + exercise.exerciseName} className="bg-light">
+			    <td>				
+					<Link className="text-dark" to={"/exercise/" + exercise.id}>
+						{exercise.exerciseName}
+					</Link>
+				</td>		
+				<td></td>
+			</tr>
+        ];
+        
+        if(this.state.expandedRows.includes(exercise.exerciseName)) {		
+			exercise.lifts.forEach((lift, index) => {
+				itemRows.push(
+					<tr 
+						key={"row-expanded-1-" + lift.id}
+						onClick={() => this.toggleLiftOptionsModal(lift, index)} 
+					>
+					<td>{new Date(lift.createdAt).toLocaleTimeString()}<br/>{lift.description}</td>
+					<td>{lift.weight} x {lift.reps}</td>
+					</tr>
+				);
+			});	
+		}
+
+        return itemRows;    
+    }
+
+	getGroupedLifts()
+	{
+		let exerciseIds = new Set(this.state.lifts.map(lift => lift.exercise.name));
+		let lifts = this.state.lifts;
+		let groupedLifts = [];
+		exerciseIds.forEach(function(name, index) {
+			let liftsByExercise = lifts.filter(lift => lift.exercise.name === name);
+			groupedLifts.push({"exerciseName": name, "id": liftsByExercise[0].exercise.id, "lifts": liftsByExercise});
+		});
+
+		return groupedLifts;
+	}
+
 	getActiveLift() {return this.state.currentLift;}
 
 	render() {
 		const { lifts } = this.state;
+		let allExerciseRows = [];
+		let groupedLifts = this.getGroupedLifts();
+		groupedLifts.forEach(exercise =>
+			{
+				const perExerciseRow = this.renderExercise(exercise);
+				allExerciseRows = allExerciseRows.concat(perExerciseRow);
+			});
 
 		return (
 			<div>
@@ -261,66 +282,18 @@ export default class LiftList extends Component {
 					onComplete={this.closeAddLiftModalAndRefresh}
 					key={-1} 
 					defaultLift={null} />	
-				<LiftModal 
-					isModalOpen={this.state.showCopyLiftModal} 
-					modalPrompt="Copy Lift"
-					toggle={this.toggleCopyLiftModal} 
+				<LiftOptionsModal
+					isModalOpen={this.state.showLiftOptionsModal}
+					toggle={this.toggleLiftOptionsModal}
+					lift={this.state.currentLift ? this.state.currentLift : null}
 					workoutId={this.state.workout_id}
-					onComplete={this.closeCopyLiftModalAndRefresh}
-					key={"copy" + (this.state.currentLift ? this.state.currentLift.id : 0)} 
-					liftToCopy={this.state.currentLift} />		
-				<LiftModal 
-					isModalOpen={this.state.showEditLiftModal} 
-					modalPrompt="Edit Lift"
-					toggle={this.toggleEditLiftModal} 
-					workoutId={this.state.workout_id}
-					onComplete={this.closeEditLiftModalAndRefresh}
-					key={"edit" + (this.state.currentLift ? this.state.currentLift.id : 0)} 
-					liftToEdit={this.state.currentLift} />			
-				<DeleteLiftModal
-					isModalOpen={this.state.showDeleteLiftModal}
-					toggle={this.toggleDeleteLiftModal}
-					liftId={this.state.currentLift ? this.state.currentLift.id : 0}
-					onComplete={this.closeDeleteLiftModalAndRefresh}
-					key={"delete" + (this.state.currentLift ? this.state.currentLift.id : 0)} />
+					onComplete={this.closeAllModalsAndRefresh}
+					key={"options" + (this.state.currentLift ? this.state.currentLift.id : 0)} />
 				<Table hover>
-					<thead>
-						<tr>
-							<th>Exercise</th>
-							<th>Weight</th>
-							<th>Reps</th>
-							<th>Time</th>
-							<th>Description</th>
-							<th>Edit</th>
-							<th>Copy</th>
-							<th>Delete</th>
-						</tr>
-					</thead>
 					<tbody>
-						{lifts &&
-							this.state.pageOfLifts.map((lift, index) => (
-								<tr 
-									key={index}
-									current-lift={lift} 
-									onClick={() => this.setActiveLift(lift, index)} 
-									>
-								<td>
-									<Link to={"/exercise/" + lift.exercise.id}>
-										{lift.exercise.name}
-									</Link>
-								</td>
-								<td>{lift.weight}</td>
-								<td>{lift.reps}</td>
-								<td>{new Date(lift.createdAt).toLocaleTimeString()}</td>
-								<td>{lift.description}</td>
-								<td><Button onClick={this.toggleEditLiftModal}>Edit</Button></td>
-								<td><Button onClick={this.toggleCopyLiftModal}>Copy</Button></td>
-								<td><Button onClick={this.toggleDeleteLiftModal}>Delete</Button></td>
-								</tr>
-							))}
+						{lifts && allExerciseRows}
 					</tbody>
 				</Table>
-				<JwPagination items={this.state.lifts} onChangePage={this.onChangePage} />
 			</div>
 		);
 	}
