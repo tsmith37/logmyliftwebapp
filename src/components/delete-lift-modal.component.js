@@ -25,6 +25,7 @@ export class DeleteLiftModal extends Component
         LiftDataService.delete(this.state.liftId)
         .then(response => {
             this.props.onComplete();
+            this.props.toggle();
         })
         .catch(e => {
             console.log(e);

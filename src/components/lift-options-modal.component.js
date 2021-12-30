@@ -37,24 +37,18 @@ export class LiftOptionsModal extends Component
 		this.setState({
 			showCopyLiftModal: !this.state.showCopyLiftModal
 		});
-
-		document.querySelector('body').classList.remove('modal-open');
 	}
 
 	toggleEditLiftModal() {
 		this.setState({
 			showEditLiftModal: !this.state.showEditLiftModal
 		});
-
-		document.querySelector('body').classList.remove('modal-open');
 	}
 
 	toggleDeleteLiftModal() {
 		this.setState({
 			showDeleteLiftModal: !this.state.showDeleteLiftModal
 		});
-
-		document.querySelector('body').classList.remove('modal-open');
 	}
 
     render() 

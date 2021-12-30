@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import WorkoutDataService from '../services/workout.service';
 
 export default class MostRecentWorkoutRedirect extends Component
@@ -39,7 +39,7 @@ export default class MostRecentWorkoutRedirect extends Component
     render() { 
         if (this.state.readyToRedirect)
         {
-            return <Redirect to={this.state.redirectPath}/>
+            return <Navigate to={this.state.redirectPath}/>
         }
         return null;
     }

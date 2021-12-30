@@ -1,22 +1,13 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Switch, Route, NavLink } from 'react-router-dom'
+import { Outlet, NavLink } from 'react-router-dom'
 import { Nav, Navbar, NavbarBrand, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button } from 'reactstrap'
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Exercise from './components/exercise.component';
-import ExerciseList from './components/exercise-list.component';
 import { ExerciseModal } from './components/exercise-modal.component';
-import WorkoutList from './components/workout-list.component';
 import { WorkoutModal } from './components/workout-modal.component';
-import LiftList from './components/lift-list.component';
-import LiftCollapsibleList from './components/lift-collapsible-list.component';
-import MostRecentWorkoutRedirect from './components/most-recent-workout-redirect.component';
-import UserSettings from './components/user-settings.component';
 
 import UserSettingsDataService from './services/userSettings.service';
-
-require('dotenv').config()
 
 class App extends Component {
 	constructor(props) {
@@ -76,7 +67,6 @@ class App extends Component {
 
 	render() {
 		return (
-		<Router>
 			<div>
 				<Navbar dark expand="md" className="navbar-expand bg-dark">
 					<NavbarBrand href="/exercise">LogMyLift</NavbarBrand>
@@ -138,26 +128,8 @@ class App extends Component {
 							</Button>
 						</Nav>
 				</Navbar>
-
-				<div className="container mt-3">
-					<Switch>
-						<Route exact path={["/", "/exercise"]} component={ExerciseList} />
-						<Route path="/exercise/:id" component={Exercise} />
-						<Route exact path={["/workout"]} component={WorkoutList} />
-						<Route path="/workout/:id" component={
-							this.state.groupLiftsByExercise ?
-							LiftCollapsibleList : LiftList
-							} />
-						<Route path="/lifts/:id" component={
-							this.state.groupLiftsByExercise ?
-							LiftCollapsibleList : LiftList
-							} />
-						<Route path="/continue-workout" component={MostRecentWorkoutRedirect} />
-						<Route path="/user-settings" component={UserSettings} />
-					</Switch>
-				</div>
+				<Outlet/>
 			</div>
-		</Router>
 		);
 	}
 }

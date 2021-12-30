@@ -55,9 +55,6 @@ export class WorkoutModal extends Component
         };
 
         WorkoutDataService.create(data)
-        .then(response => {
-            this.props.onComplete();
-        })
         .catch(e => {
             console.log(e);
         });
@@ -72,9 +69,6 @@ export class WorkoutModal extends Component
         };
 
         WorkoutDataService.update(this.state.workoutId, data)
-        .then(response => {
-            this.props.onComplete();
-        })
         .catch(e => {
             console.log(e);
         });
@@ -95,6 +89,9 @@ export class WorkoutModal extends Component
         {
             this.addWorkout();
         }
+
+        this.props.onComplete();
+        this.props.toggle();
     }
 
     render() 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import UserSettingsDataService from '../services/userSettings.service';
-import { Button, Input, InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap'
+import { Button, Input, InputGroup, InputGroupText } from 'reactstrap'
 
 export default class WorkoutList extends Component {
 	constructor(props) {
@@ -59,10 +59,8 @@ export default class WorkoutList extends Component {
 				<div>
 					<h4>User Settings</h4>
 				</div>
-				<InputGroup>            
-					<InputGroupAddon addonType="prepend">
-              			<InputGroupText>Group lifts by exercise</InputGroupText>
-            		</InputGroupAddon>
+				<InputGroup>
+              		<InputGroupText>Group lifts by exercise</InputGroupText>
 					<Input type="checkbox" checked={this.state.groupLiftsByExercise} onChange={this.toggleGroupLifts}/>
 				</InputGroup>
 				<Button onClick={() => this.updateUserSettings()}>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ExerciseSelector } from './exercise-selector.component';
-import { InputGroupAddon,InputGroupText, Button, InputGroup, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { InputGroupText, Button, InputGroup, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import LiftDataService from '../services/lift.service';
 
 export class LiftModal extends Component 
@@ -109,6 +109,7 @@ export class LiftModal extends Component
         .then(response => {
           this.resetFields();
           this.props.onComplete();
+          this.props.toggle();
         })
         .catch(e => {
           console.log(e);
@@ -136,6 +137,7 @@ export class LiftModal extends Component
         .then(response => {
           this.resetFields();
           this.props.onComplete();
+          this.props.toggle();
         })
         .catch(e => {
           console.log(e);
@@ -183,16 +185,12 @@ export class LiftModal extends Component
           <br />
 					<InputGroup>
             <Input placeholder="Weight" min={0} max={9999} type="number" step="5" onChange={(e) => this.setWeight(`${e.target.value}`)} value={this.state.weight}/>
-            <InputGroupAddon addonType="append">
-              <InputGroupText>lbs</InputGroupText>
-            </InputGroupAddon>
+            <InputGroupText>lbs</InputGroupText>
           </InputGroup>
           <br />
           <InputGroup>
             <Input placeholder="Reps" min={0} max={9999} type="number" step="1" onChange={(e) => this.setReps(`${e.target.value}`)} value={this.state.reps}/>
-            <InputGroupAddon addonType="append">
-              <InputGroupText>reps</InputGroupText>
-            </InputGroupAddon>
+            <InputGroupText>reps</InputGroupText>
           </InputGroup>
           <br />
           <InputGroup>
