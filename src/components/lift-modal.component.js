@@ -183,7 +183,7 @@ export class LiftModal extends Component
 				<ModalBody> 
           <ExerciseSelector getInputData={this.setExerciseId} defaultExerciseId={this.state.exerciseId}/>
           <br />
-					<InputGroup>
+		  <InputGroup>
             <Input placeholder="Weight" min={0} max={9999} type="number" step="5" onChange={(e) => this.setWeight(`${e.target.value}`)} value={this.state.weight}/>
             <InputGroupText>lbs</InputGroupText>
           </InputGroup>

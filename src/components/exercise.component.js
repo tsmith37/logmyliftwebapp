@@ -25,10 +25,6 @@ export default function Exercise()
 			});
 	}, [exerciseId]);
 
-	const onChangePage = (data) => {
-		setPageOfLifts(data);
-	}
-
 	const getQuerySortColumn = () => {
 		switch (sortEnum) {
 			case 1:
@@ -139,7 +135,7 @@ export default function Exercise()
 						))}
 				</tbody>
 			</Table>
-			<JwPagination items={lifts} onChangePage={onChangePage} />
+			<JwPagination items={lifts} onChangePage={data => setPageOfLifts(data)} />
 		</div>
 	);
 }

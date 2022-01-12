@@ -11,6 +11,10 @@ import MostRecentWorkoutRedirect from './components/most-recent-workout-redirect
 import WorkoutList from './components/workout-list.component';
 import UserSettings from './components/user-settings.component';
 
+import TrainingProgramList from './components/training/training-program-list.component';
+import TrainingProgram from './components/training/training-program.component';
+import TrainingWorkout from './components/training/training-workout.component';
+
 ReactDOM.render(
 	<BrowserRouter>
 		<Routes>
@@ -22,6 +26,9 @@ ReactDOM.render(
 				<Route path="workout/:id" element={<LiftCollapsibleList />} />
 				<Route path="/continue-workout" element={<MostRecentWorkoutRedirect />} />
 				<Route path="/user-settings" element={<UserSettings />} />
+				<Route path="/training/program" element={<TrainingProgramList />} />
+				<Route path="/training/program/:id" element={<TrainingProgram />} />
+				<Route path="/training/workout/:id" element={<TrainingWorkout />} />
 			</Route>
 
 

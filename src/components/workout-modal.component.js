@@ -55,9 +55,12 @@ export class WorkoutModal extends Component
         };
 
         WorkoutDataService.create(data)
-        .catch(e => {
-            console.log(e);
-        });
+            .then(response => {
+                this.props.onComplete(response.data.id);
+            })
+            .catch(e => {
+                console.log(e);
+            });
     }
 
     editWorkout()
@@ -90,7 +93,6 @@ export class WorkoutModal extends Component
             this.addWorkout();
         }
 
-        this.props.onComplete();
         this.props.toggle();
     }
 
