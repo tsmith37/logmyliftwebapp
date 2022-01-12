@@ -3,26 +3,29 @@ import React, { useState, useEffect } from 'react';
 import TrainingWorkoutDataService from '../../services/training/training-workout.service';
 
 export default function TrainingWorkoutModal(props) {    
-    const [workout, setWorkout] = useState(props.workout);
     const [programId, setProgramId] = useState(props.programId);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [week, setWeek] = useState(0);
     const [day, setDay] = useState(0);
-    const [mode, setMode] = useState("create");
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        if (props.workout)
-        {
-            setProgramId(workout.trainingProgramId);
-            setName(workout.name);
-            setDescription(workout.description ? workout.description : "");
-            setWeek(workout.week ? workout.week : 0);
-            setDay(workout.day ? workout.day : 1);
-            setMode("edit");
+        if (props.workout && props.mode === "edit") {
+            setProgramId(props.workout.trainingProgramId);
+            setName(props.workout.name);
+            setDescription(props.workout.description ? props.workout.description : "");
+            setWeek(props.workout.week ? props.workout.week : 0);
+            setDay(props.workout.day ? props.workout.day : 1);
         }
-    }, [workout]);
+        else if (props.workout && props.mode === "copy") {
+            setProgramId(props.workout.trainingProgramId);
+            setName(props.workout.name);
+            setDescription(props.workout.description ? props.workout.description : "");
+            setWeek(props.workout.week ? props.workout.week : 0);
+            setDay(props.workout.day ? props.workout.day : 1);
+        }
+    }, [props]);
 
     const validateWorkout = () => {
         if (!programId || programId <= 0)
@@ -42,7 +45,7 @@ export default function TrainingWorkoutModal(props) {
             setMessage('Day is not valid.');
             return false;
         }
-        else if (mode === "edit" && workout.id <= 0) {
+        else if (props.mode === "edit" && props.workout.id <= 0) {
             setMessage('Workout not properly loaded.');
             return false;
         }
@@ -72,15 +75,15 @@ export default function TrainingWorkoutModal(props) {
     const editWorkout = () => {
         var data =
         {
-            id: workout.id,
-            trainingProgramId: workout.trainingProgramId,
+            id: props.workout.id,
+            trainingProgramId: props.workout.trainingProgramId,
             name: name,
             description: description,
             week: week,
             day: day
         };
 
-        TrainingWorkoutDataService.update(workout.id, data)
+        TrainingWorkoutDataService.update(props.workout.id, data)
             .then(response => {
                 props.onComplete();
             })
@@ -92,7 +95,7 @@ export default function TrainingWorkoutModal(props) {
     const execute = () => {
         if (!validateWorkout()) { return; }
 
-        if (mode === "edit") {
+        if (props.mode === "edit") {
             editWorkout();
         }
         else
