@@ -1,5 +1,6 @@
-import { Button, InputGroup, InputGroupText, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Alert, Button, Input, InputGroup, InputGroupText, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
+
 import TrainingWorkoutDataService from '../../services/training/training-workout.service';
 
 export default function TrainingWorkoutModal(props) {    
@@ -47,6 +48,26 @@ export default function TrainingWorkoutModal(props) {
         }
         else if (props.mode === "edit" && props.workout.id <= 0) {
             setMessage('Workout not properly loaded.');
+            return false;
+        }
+
+        return true;
+    }
+
+    const workoutPromptEnabled = () => {
+        if (!programId || programId <= 0) {
+            return false;
+        }
+        else if (name === '') {
+            return false;
+        }
+        else if (week <= 0) {
+            return false;
+        }
+        else if (day <= 0) {
+            return false;
+        }
+        else if (props.mode === "edit" && props.workout.id <= 0) {
             return false;
         }
 
@@ -126,10 +147,10 @@ export default function TrainingWorkoutModal(props) {
                     <InputGroupText>Day</InputGroupText>
                     <Input placeholder="#" min={1} max={7} type="number" step="1" onChange={e => setDay(e.target.value)} value={day} />
                 </InputGroup>
-                <p>{message}</p>
+                <Alert color="danger" isOpen={message !== ""}>{message}</Alert>
             </ModalBody>
             <ModalFooter>
-                <Button color='primary' onClick={() => execute()}>{props.modalPrompt}</Button>{' '}
+                <Button color='primary' disabled={!workoutPromptEnabled()} onClick={() => execute()}>{props.modalPrompt}</Button>{' '}
                 <Button color='secondary' onClick={props.toggle}>Cancel</Button>
             </ModalFooter>
         </Modal>

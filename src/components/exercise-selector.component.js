@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Autosuggest from 'react-autosuggest';
+
 import ExerciseDataService from '../services/exercise.service';
 
 var exercises = {};
@@ -50,15 +51,21 @@ export class ExerciseSelector extends Component {
     // Suggestions also need to be provided to the Autosuggest,
     // and they are initially empty because the Autosuggest is closed.
     this.state = {
-      value: '',
-      suggestions: []
+        value: '',
+        suggestions: []
     };
 
-    if (this.props.defaultExerciseId !== -1)
-    {
-      this.setExerciseName(this.props.defaultExerciseId)
+    if (this.props.defaultExerciseId !== -1) {
+        this.setExerciseName(this.props.defaultExerciseId);
     }
-  }
+
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.defaultExerciseId !== prevProps.defaultExerciseId && this.props.defaultExerciseId !== -1 && prevProps.defaultExerciseId !== -1) {
+            this.setExerciseName(this.props.defaultExerciseId);
+        }
+    }
 
   setExerciseName = (id) => {
     ExerciseDataService.get(id)

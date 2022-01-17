@@ -82,8 +82,8 @@ export default function App() {
 							Start
 					</Button>
 					</Nav>
-			</Navbar>
-			<Outlet/>
+			</Navbar>			
+				<Outlet />
 		</div>
 	)
 }

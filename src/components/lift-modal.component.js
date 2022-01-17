@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { Alert, InputGroupText, Button, Input, InputGroup, Modal, ModalBody, ModalFooter , ModalHeader} from 'reactstrap';
+
 import { ExerciseSelector } from './exercise-selector.component';
-import { InputGroupText, Button, InputGroup, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+
 import LiftDataService from '../services/lift.service';
 
 export class LiftModal extends Component 
@@ -63,7 +65,7 @@ export class LiftModal extends Component
     setWorkoutId(value) { this.setState({workoutId: value}); }
     setExerciseId(value) { this.setState({exerciseId: value}); }
     setWeight(value) { this.setState({weight: value}); }
-	  setReps(value) { this.setState({reps: value}); }
+	setReps(value) { this.setState({reps: value}); }
     setDescription(value) { this.setState({description: value}); }
     setMessage(value) { this.setState({message: value}); }
 
@@ -144,6 +146,26 @@ export class LiftModal extends Component
         });      
     }
 
+    enableLiftPrompt() {
+        if (!(this.state.workoutId > 0)) {
+            return false;
+        }
+
+        if (!(this.state.exerciseId > 0)) {
+            return false;
+        }
+
+        if (!(this.state.reps > 0)) {
+            return false;
+        }
+
+        if (!(this.state.weight > 0)) {
+            return false;
+        }
+
+        return true;
+    }
+
     validateLift()
     {
       if (!(this.state.workoutId > 0))
@@ -179,28 +201,28 @@ export class LiftModal extends Component
 			<Modal
 				isOpen={this.props.isModalOpen}
 				toggle={this.props.toggle}>
-				<ModalHeader toggle={this.props.toggle}>{this.props.modalPrompt}</ModalHeader>
+                <ModalHeader toggle={this.props.toggle}>{this.props.modalPrompt}</ModalHeader>
 				<ModalBody> 
-          <ExerciseSelector getInputData={this.setExerciseId} defaultExerciseId={this.state.exerciseId}/>
-          <br />
-		  <InputGroup>
-            <Input placeholder="Weight" min={0} max={9999} type="number" step="5" onChange={(e) => this.setWeight(`${e.target.value}`)} value={this.state.weight}/>
-            <InputGroupText>lbs</InputGroupText>
-          </InputGroup>
-          <br />
-          <InputGroup>
-            <Input placeholder="Reps" min={0} max={9999} type="number" step="1" onChange={(e) => this.setReps(`${e.target.value}`)} value={this.state.reps}/>
-            <InputGroupText>reps</InputGroupText>
-          </InputGroup>
-          <br />
-          <InputGroup>
-            <Input placeholder="Description" onChange={(e) => this.setDescription(`${e.target.value}`)} value={this.state.description}/>
-          </InputGroup>
-          <br />
-          <p>{this.state.message}</p>
+                    <ExerciseSelector getInputData={this.setExerciseId} defaultExerciseId={this.state.exerciseId}/>
+                    <br />
+		            <InputGroup>
+                        <Input placeholder="Weight" min={0} max={9999} type="number" step="5" onChange={(e) => this.setWeight(`${e.target.value}`)} value={this.state.weight}/>
+                        <InputGroupText>lbs</InputGroupText>
+                    </InputGroup>
+                    <br />
+                    <InputGroup>
+                        <Input placeholder="Reps" min={0} max={9999} type="number" step="1" onChange={(e) => this.setReps(`${e.target.value}`)} value={this.state.reps}/>
+                        <InputGroupText>reps</InputGroupText>
+                    </InputGroup>
+                    <br />
+                    <InputGroup>
+                        <Input placeholder="Description" onChange={(e) => this.setDescription(`${e.target.value}`)} value={this.state.description}/>
+                    </InputGroup>
+                    <br />
+                    <Alert color="danger" isOpen={this.state.message !== ""}>{this.state.message}</Alert>
 				</ModalBody>
 				<ModalFooter>
-					<Button color='primary' onClick={() => this.execute()}>OK</Button>{' '}
+                    <Button color='primary' disabled={!this.enableLiftPrompt()} onClick={() => this.execute()}>OK</Button>{' '}
 					<Button color='secondary' onClick={this.props.toggle}>Cancel</Button>
 				</ModalFooter>
 			</Modal>

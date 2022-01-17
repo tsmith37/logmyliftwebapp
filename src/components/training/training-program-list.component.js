@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import TrainingProgramDataService from '../../services/training/training-program.service';
 import { Button, Col, Container, Row, Table } from 'reactstrap'
 import { Link } from 'react-router-dom';
 import JwPagination from 'jw-react-pagination';
-import TrainingProgramModal from './training-program-modal.component';
+
+import TrainingProgramDataService from '../../services/training/training-program.service';
+
 import DeleteTrainingProgramModal from './delete-training-program-modal.component';
+import TrainingProgramModal from './training-program-modal.component';
 
 export default function TrainingProgramList()
 {
@@ -37,10 +39,12 @@ export default function TrainingProgramList()
 
     return (
 		<div>
-			<div>
-				<h4>Program List</h4>
-			</div>
-			<Container>
+			<Container fluid={true}>
+				<div>
+					<h4>Program List</h4>
+				</div>
+			</Container>
+			<Container fluid={true}>
 				<Row>
 					<Col xs="auto">
 						<input
@@ -81,36 +85,38 @@ export default function TrainingProgramList()
 				onComplete={() => retrievePrograms()}
 				program={activeProgram}
 				key={"delete" + (activeProgram ? activeProgram.id : 0)} />
-			<Table hover>
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Description</th>
-						<th>Created time</th>
-						<th>Edit</th>
-						<th>Delete</th>
-					</tr>
-				</thead>
-				<tbody>
-					{programs &&
-						pageOfPrograms.map((program, index) => (
-							<tr key={index}
-								onClick={() => setActiveProgram(program)}
-							>
-								<td>
-									<Link to={"/training/program/" + program.id}>
-										{program.name}
-									</Link>
-								</td>
-								<td>{program.description}</td>
-								<td>{new Date(program.createdAt).toLocaleDateString()}</td>
-								<td><Button onClick={() => setEditProgramModalOpen(true)}>Edit</Button></td>
-								<td><Button onClick={() => setDeleteProgramModalOpen(true)}>Delete</Button></td>
-							</tr>
-						))}
-				</tbody>
-			</Table>
-			<JwPagination items={programs} onChangePage={onChangePage} />
+			<Container fluid={true}>
+				<Table hover>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Description</th>
+							<th>Created time</th>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						{programs &&
+							pageOfPrograms.map((program, index) => (
+								<tr key={index}
+									onClick={() => setActiveProgram(program)}
+								>
+									<td>
+										<Link to={"/training/program/" + program.id}>
+											{program.name}
+										</Link>
+									</td>
+									<td>{program.description}</td>
+									<td>{new Date(program.createdAt).toLocaleDateString()}</td>
+									<td><Button onClick={() => setEditProgramModalOpen(true)}>Edit</Button></td>
+									<td><Button onClick={() => setDeleteProgramModalOpen(true)}>Delete</Button></td>
+								</tr>
+							))}
+					</tbody>
+					</Table>
+					<JwPagination items={programs} onChangePage={onChangePage} />
+				</Container>
 		</div>
     )
 }

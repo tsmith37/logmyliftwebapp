@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Modal, ModalBody } from 'reactstrap';
+
 import { LiftModal } from './lift-modal.component';
 import { DeleteLiftModal } from './delete-lift-modal.component';
 

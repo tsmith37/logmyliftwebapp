@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+
 import LiftDataService from '../services/lift.service';
 
 export class DeleteLiftModal extends Component 

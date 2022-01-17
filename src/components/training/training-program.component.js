@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { Button, ButtonGroup, Col, Container, Popover, PopoverHeader, PopoverBody, Row, Table } from 'reactstrap'
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import JwPagination from 'jw-react-pagination';
+
 import TrainingProgramDataService from '../../services/training/training-program.service';
 import TrainingWorkoutDataService from '../../services/training/training-workout.service';
-import { Button, ButtonGroup, Col, Container, Row, Table } from 'reactstrap'
-import JwPagination from 'jw-react-pagination';
-import { Link, useParams } from 'react-router-dom';
-import TrainingWorkoutModal from './training-workout-modal.component';
+
 import DeleteTrainingWorkoutModal from './delete-training-workout-modal.component';
+import TrainingWorkoutModal from './training-workout-modal.component';
 
 export default function TrainingProgram() {
 	let params = useParams();
 	const [programId, setProgramId] = useState(params.id);
 	const [program, setProgram] = useState("program");
+	const [descriptionPopoverOpen, setDescriptionPopoverOpen] = useState(false);
 	const [workouts, setWorkouts] = useState([]);
 	const [pageOfWorkouts, setPageOfWorkouts] = useState([]);
 	const [createWorkoutModalOpen, setCreateWorkoutModalOpen] = useState(false);
@@ -20,6 +23,11 @@ export default function TrainingProgram() {
 	const [activeWorkout, setActiveWorkout] = useState("activeWorkout");
 	const [searchTerm, setSearchTerm] = useState("");
 	const [expandedRows, setExpandedRows] = useState([]);
+	const navigate = useNavigate();
+
+	const redirectWorkoutEditor = (id) => {
+		navigate('/training/workout/edit/' + id);
+	}
 
 	const retriveProgram = () => {
 		TrainingProgramDataService.get(params.id)
@@ -45,7 +53,7 @@ export default function TrainingProgram() {
 	const handleRowClick = (e, workout) => {
 		setActiveWorkout(workout);
 
-		if (e.target.value != "start") {
+		if (e.target.value !== "up" && e.target.value !== "down") {
 			const currentExpandedRows = expandedRows;
 			const isRowCurrentlyExpanded = currentExpandedRows.includes(workout.id);
 
@@ -65,9 +73,14 @@ export default function TrainingProgram() {
 					{workout.name}
 				</Link>
 			</td>
-			<td>{workout.description}</td>
 			<td>{workout.week}</td>
 			<td>{workout.day}</td>
+			<td>
+				<ButtonGroup>
+					<Button value="up" disabled={workout.week === 1 && workout.day === 1} onClick={() => move(workout, false)}>Down</Button>
+					<Button value="down" onClick={() => move(workout, true)}>Up</Button>
+				</ButtonGroup>
+			</td>
 			</tr>
 		];
 
@@ -85,14 +98,13 @@ export default function TrainingProgram() {
 				onClick={() => setActiveWorkout(workout)}
 			>
 				<td>
-					<ButtonGroup>
-						<Button disabled={workout.week === 1 && workout.day === 1} onClick={() => move(workout, false)}>Down</Button>
-						<Button onClick={() => move(workout, true)}>Up</Button>
-					</ButtonGroup>
+					<Button color='primary' onClick={() => redirectWorkoutEditor(workout.id)}>Edit</Button>{' '}
+					<Button color='secondary' onClick={() => setCopyWorkoutModalOpen(true)}>Copy</Button>{' '}
+					<Button color='danger' onClick={() => setDeleteWorkoutModalOpen(true)}>Delete</Button>
 				</td>
-				<td><Button onClick={() => setCopyWorkoutModalOpen(true)}>Copy</Button></td>
-				<td><Button onClick={() => setEditWorkoutModalOpen(true)}>Edit</Button></td>
-				<td><Button onClick={() => setDeleteWorkoutModalOpen(true)}>Delete</Button></td>
+				<td />
+				<td />
+				<td />
 			</tr>
 		)
 	}
@@ -147,12 +159,12 @@ export default function TrainingProgram() {
 		var workoutData = setWeekDay(workout, newWeek, newDay);
 
 		var swappedWorkout = workouts.find(({ week, day }) => (week === newWeek && day === newDay ));
-		if (swappedWorkout && swappedWorkout.id != workout.id) {
+		if (swappedWorkout && swappedWorkout.id !== workout.id) {
 			var swappedWorkoutData = setWeekDay(swappedWorkout, workout.week, workout.day);
 		}
 
 		updateWorkout(workoutData, () => {
-			if (swappedWorkout && swappedWorkout.id != workout.id) {
+			if (swappedWorkout && swappedWorkout.id !== workout.id) {
 				updateWorkout(swappedWorkoutData, retrieveWorkouts);
 			}
 			retrieveWorkouts();
@@ -179,17 +191,12 @@ export default function TrainingProgram() {
 
 	return (
 		<div>
-			<Container>
-				<Row>
-					<Col xs="auto">
-						<h4>{program.name}</h4>
-					</Col>
-					<Col xs="auto">
-						<h6>{program.description}</h6>
-					</Col>
-				</Row>
-			</Container>
-			<Container>
+			<Container fluid={true}>
+				<h4 id="name">{program.name}</h4>
+				<Popover placement="auto-start" isOpen={descriptionPopoverOpen} target="name" toggle={() => setDescriptionPopoverOpen(!descriptionPopoverOpen)}>
+					<PopoverHeader>{program.name}</PopoverHeader>
+					<PopoverBody>{program.description}</PopoverBody>
+				</Popover>
 				<Row>
 					<Col xs="auto">
 						<input
@@ -205,7 +212,7 @@ export default function TrainingProgram() {
 							Create
 						</Button>
 					</Col>
-				</Row>
+					</Row>
 			</Container>
 			<TrainingWorkoutModal
 				isModalOpen={editWorkoutModalOpen}
@@ -244,20 +251,22 @@ export default function TrainingProgram() {
 				onComplete={() => retrieveWorkouts()}
 				workout={activeWorkout}
 				key={"delete" + (activeWorkout ? activeWorkout.id : 0)} />
-			<Table hover>
-				<thead>
-					<tr>
-						<th>Workout</th>
-						<th>Description</th>
-						<th>Week</th>
-						<th>Day</th>
-					</tr>
-				</thead>
-				<tbody>
-					{renderRows()}
-				</tbody>
-			</Table>
-			<JwPagination items={workouts} onChangePage={data => setPageOfWorkouts(data)} />
+			<Container fluid={true}>
+				<Table hover>
+					<thead>
+						<tr>
+							<th>Workout</th>
+							<th>Week</th>
+							<th>Day</th>
+							<th>Move</th>
+						</tr>
+					</thead>
+					<tbody>
+						{renderRows()}
+					</tbody>
+				</Table>
+				<JwPagination items={workouts} onChangePage={data => setPageOfWorkouts(data)} />
+			</Container>
 		</div>
 	)
 }

@@ -1,10 +1,9 @@
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import React, { useState } from 'react';
+import React from 'react';
+import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap';
+
 import TrainingLiftDataService from '../../services/training/training-lift.service';
 
-export default function DeleteTrainingLiftModal(props) {
-    const [lift, setLift] = useState(props.lift);
-
+export default function DeleteTrainingLiftModal(props) {    
     const execute = () => {
         TrainingLiftDataService.delete(props.lift.id)
         .then(response => {

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { Button, Col, Container, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Popover, PopoverBody, PopoverHeader, Row, Table } from 'reactstrap';
+
 import LiftDataService from '../services/lift.service';
 import WorkoutDataService from '../services/workout.service';
-import { Button, Col, Container, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Row, Table } from 'reactstrap';
+
 import { LiftModal } from './lift-modal.component';
 import { LiftOptionsModal } from './lift-options-modal.component';
 
@@ -11,6 +13,7 @@ export default function LiftCollapsible()
 	let params = useParams();
 	const [workoutId, setWorkoutId] = useState(params.id);
 	const [description, setDescription] = useState('description');
+	const [descriptionPopoverOpen, setDescriptionPopoverOpen] = useState(false);
 	const [startTime, setStartTime] = useState('startTime');
 	const [lifts, setLifts] = useState([]);
 	const [activeLift, setActiveLift] = useState('activeLift');
@@ -126,17 +129,14 @@ export default function LiftCollapsible()
 
 	return (
 		<div>
-			<Container>
-				<Row>
-					<Col xs="auto">
-						<h4>{description}</h4>
-					</Col>
-					<Col xs="auto">
-						<h4>{new Date(startTime).toLocaleDateString()}</h4>
-					</Col>
-				</Row>
-			</Container>
-			<Container>
+			<Container fluid={true}>
+				<h4 id="name">{description}</h4>
+				<Popover placement="auto-start" isOpen={descriptionPopoverOpen} target="name" toggle={() => setDescriptionPopoverOpen(!descriptionPopoverOpen)}>
+					<PopoverHeader>{description}</PopoverHeader>
+					<PopoverBody>
+						{"Created on: " + new Date(startTime).toLocaleDateString()}
+					</PopoverBody>
+				</Popover>
 				<Row>
 					<Col>
 						Start: {new Date(Math.min.apply(null, lifts.map(function (x) { return new Date(x.createdAt); }))).toLocaleTimeString()}
@@ -153,8 +153,6 @@ export default function LiftCollapsible()
 						Sets: {lifts.length}
 					</Col>
 				</Row>
-			</Container>
-			<Container>
 				<Row>
 					<Col xs="auto">
 						<Button color="primary" onClick={() => setAddLiftModalOpen(!addLiftModalOpen)}>
@@ -175,7 +173,6 @@ export default function LiftCollapsible()
 						</Dropdown>
 					</Col>
 				</Row>
-			</Container>
 			<LiftModal
 				isModalOpen={addLiftModalOpen}
 				modalPrompt="Add Lift"
@@ -195,7 +192,8 @@ export default function LiftCollapsible()
 				<tbody>
 					{renderRows()}
 				</tbody>
-			</Table>
+				</Table>
+			</Container>
 		</div>
 	)
 }

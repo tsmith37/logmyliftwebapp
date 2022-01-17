@@ -1,6 +1,8 @@
-import { Button, InputGroup, InputGroupText, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Alert, Button, Input, InputGroup, InputGroupText, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+
 import TrainingLiftDataService from '../../services/training/training-lift.service';
+
 import { ExerciseSelector } from '../exercise-selector.component';
 
 export default function TrainingLiftModal(props) {
@@ -13,8 +15,7 @@ export default function TrainingLiftModal(props) {
     const [exerciseId, setExerciseId] = useState(-1);
     const [message, setMessage] = useState("");
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         if ((props.mode === "edit" || props.mode === "copy") && props.lift)
         {
             setSequence(props.lift.sequence);
@@ -24,6 +25,22 @@ export default function TrainingLiftModal(props) {
             setWorkoutId(props.lift.trainingWorkoutId);
         }
     }, [props]);
+
+    const liftPromptEnabled = () => {
+        if (!workoutId || workoutId <= 0) {
+            return false;
+        }
+        else if (!exerciseId || exerciseId <= 0) {
+            return false;
+        }
+        else if (!sequence || sequence <= 0) {
+            return false;
+        }
+        else if (mode === "edit" && !lift) {
+        }
+
+        return true;
+    }
 
     const validateLift = () => {
         if (!workoutId || workoutId <= 0) {
@@ -119,10 +136,10 @@ export default function TrainingLiftModal(props) {
                     <InputGroupText>reps</InputGroupText>
                 </InputGroup>
                 <br />
-                <p>{message}</p>
+                <Alert color="danger" isOpen={message !== ""}>{message}</Alert>
             </ModalBody>
             <ModalFooter>
-                <Button color='primary' onClick={() => execute()}>{props.modalPrompt}</Button>{' '}
+                <Button color='primary' disabled={!liftPromptEnabled()} onClick={() => execute()}>{props.modalPrompt}</Button>{' '}
                 <Button color='secondary' onClick={props.toggle}>Cancel</Button>
             </ModalFooter>
         </Modal>

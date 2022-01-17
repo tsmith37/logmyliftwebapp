@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import ExerciseDataService from '../services/exercise.service';
-import { Link } from 'react-router-dom';
 import { Button, Col, Container, Row, Table } from 'reactstrap'
-import { ExerciseModal } from './exercise-modal.component';
+import { Link } from 'react-router-dom';
 import JwPagination from 'jw-react-pagination';
+
+import ExerciseDataService from '../services/exercise.service';
+
+import { ExerciseModal } from './exercise-modal.component';
 
 export default class ExerciseList extends Component {
 	constructor(props) {
@@ -126,27 +128,26 @@ export default class ExerciseList extends Component {
 
 		return (
 			<div>
+				<Container fluid={true}>
 				<div>
 					<h4>Exercise List</h4>
 				</div>
-				<Container>
-					<Row>
-						<Col xs="auto">
-							<input
-								type="text"
-								className="form-control"
-								placeholder="Search by name"
-								value={searchName}
-								onChange={this.onChangeSearchName}
-							/>
-						</Col>
-						<Col xs="1">
-							<Button color="primary" onClick={this.toggleAddExerciseModal}>
-								Add
-							</Button>
-						</Col>
-					</Row>
-				</Container>
+				<Row>
+					<Col xs="auto">
+						<input
+							type="text"
+							className="form-control"
+							placeholder="Search by name"
+							value={searchName}
+							onChange={this.onChangeSearchName}
+						/>
+					</Col>
+					<Col xs="1">
+						<Button color="primary" onClick={this.toggleAddExerciseModal}>
+							Add
+						</Button>
+					</Col>
+				</Row>
 				<ExerciseModal 
 					isModalOpen={this.state.showAddExerciseModal} 
 					modalPrompt="Create"
@@ -167,7 +168,7 @@ export default class ExerciseList extends Component {
 						<tr>
 							<th>Name</th>
 							<th>Description</th>
-							<th>Edit</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -190,6 +191,7 @@ export default class ExerciseList extends Component {
 					</tbody>
 				</Table>
 				<JwPagination items={this.state.exercises} onChangePage={this.onChangePage} />
+				</Container>
 			</div>
 		);
 	}

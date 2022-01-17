@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+
 import WorkoutDataService from '../services/workout.service';
 
 export class DeleteWorkoutModal extends Component {

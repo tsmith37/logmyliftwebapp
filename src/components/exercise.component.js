@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import LiftDataService from '../services/lift.service';
-import ExerciseDataService from '../services/exercise.service';
-import {  Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Table } from 'reactstrap';
-import JwPagination from 'jw-react-pagination';
+import { Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Popover, PopoverBody, PopoverHeader, Table } from 'reactstrap';
 import { useParams } from "react-router-dom";
+import JwPagination from 'jw-react-pagination';
+
+import ExerciseDataService from '../services/exercise.service';
+import LiftDataService from '../services/lift.service';
 
 export default function Exercise()
 {
 	let params = useParams();
 	const [exerciseId, setExerciseId] = useState(params.id);
 	const [exercise, setExercise] = useState('exercise');
+	const [descriptionPopoverOpen, setDescriptionPopoverOpen] = useState(false);
 	const [lifts, setLifts] = useState([]);
 	const [pageOfLifts, setPageOfLifts] = useState([]);
 	const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
@@ -88,29 +90,34 @@ export default function Exercise()
 	}, [exerciseId, sortEnum]);
 
 	return (
+		<Container fluid={true}>
 		<div>
 			<div className="row">
-				<div className="col-sm-5">
-					<h4>{exercise ? exercise.name : "Name"}</h4>
-				</div>
-				<div className="col-sm-5">
-					<h4>{exercise ? exercise.description : "Description"}</h4>
-				</div>
-				<div className="col-sm-1">
-					<Dropdown isOpen={sortDropdownOpen} toggle={() => setSortDropdownOpen(!sortDropdownOpen)}>
-						<DropdownToggle caret>
-							Sort
-						</DropdownToggle>
-						<DropdownMenu>
-							<DropdownItem onClick={() => setSortEnum(1)}>Newest to oldest</DropdownItem>
-							<DropdownItem onClick={() => setSortEnum(2)}>Oldest to newest</DropdownItem>
-							<DropdownItem onClick={() => setSortEnum(3)}>Heaviest</DropdownItem>
-							<DropdownItem onClick={() => setSortEnum(4)}>Lightest</DropdownItem>
-							<DropdownItem onClick={() => setSortEnum(5)}>Hardest</DropdownItem>
-							<DropdownItem onClick={() => setSortEnum(6)}>Easiest</DropdownItem>
-						</DropdownMenu>
-					</Dropdown>
-				</div>
+				<h4 id="name">{exercise ? exercise.name : "Name"}</h4>
+				<Popover placement="auto-start" isOpen={descriptionPopoverOpen} target="name" toggle={() => setDescriptionPopoverOpen(!descriptionPopoverOpen)}>
+					<PopoverHeader>{exercise ? exercise.name : "Name"}</PopoverHeader>
+					<PopoverBody>
+						<div>
+							{exercise ? "Description: " + exercise.description : ""}
+						</div>
+						<div>
+							{exercise ? "Created on: " + new Date(exercise.createdAt).toLocaleDateString() : ""}
+						</div>
+					</PopoverBody>
+				</Popover>
+				<Dropdown isOpen={sortDropdownOpen} toggle={() => setSortDropdownOpen(!sortDropdownOpen)}>
+					<DropdownToggle caret>
+						Sort
+					</DropdownToggle>
+					<DropdownMenu>
+						<DropdownItem onClick={() => setSortEnum(1)}>Newest to oldest</DropdownItem>
+						<DropdownItem onClick={() => setSortEnum(2)}>Oldest to newest</DropdownItem>
+						<DropdownItem onClick={() => setSortEnum(3)}>Heaviest</DropdownItem>
+						<DropdownItem onClick={() => setSortEnum(4)}>Lightest</DropdownItem>
+						<DropdownItem onClick={() => setSortEnum(5)}>Hardest</DropdownItem>
+						<DropdownItem onClick={() => setSortEnum(6)}>Easiest</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>	
 			</div>
 			<Table hover>
 				<thead>
@@ -136,6 +143,7 @@ export default function Exercise()
 				</tbody>
 			</Table>
 			<JwPagination items={lifts} onChangePage={data => setPageOfLifts(data)} />
-		</div>
+			</div>
+			</Container>
 	);
 }

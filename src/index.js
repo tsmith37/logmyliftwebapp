@@ -13,7 +13,9 @@ import UserSettings from './components/user-settings.component';
 
 import TrainingProgramList from './components/training/training-program-list.component';
 import TrainingProgram from './components/training/training-program.component';
-import TrainingWorkout from './components/training/training-workout.component';
+import TrainingWorkoutEditor from './components/training/training-workout-editor.component';
+import StartTrainingWorkout from './components/training/start-training-workout.component';
+import StartTrainingLift from './components/training/start-training-lift.component';
 
 ReactDOM.render(
 	<BrowserRouter>
@@ -22,29 +24,15 @@ ReactDOM.render(
 				<Route path="workout" element={<WorkoutList />} />
 				<Route path="exercise" element={<ExerciseList />} />
 				<Route path="exercise/:id" element={<Exercise />} />
-				<Route path="workout" element={<WorkoutList />} />
 				<Route path="workout/:id" element={<LiftCollapsibleList />} />
 				<Route path="/continue-workout" element={<MostRecentWorkoutRedirect />} />
 				<Route path="/user-settings" element={<UserSettings />} />
 				<Route path="/training/program" element={<TrainingProgramList />} />
 				<Route path="/training/program/:id" element={<TrainingProgram />} />
-				<Route path="/training/workout/:id" element={<TrainingWorkout />} />
+				<Route path="/training/workout/edit/:id" element={<TrainingWorkoutEditor />} />
+				<Route path="/training/workout/start" element={<StartTrainingLift />} />
+				<Route path="/training/workout/:id" element={<StartTrainingWorkout />} />
 			</Route>
-
-
-		{/*<Route exact path={"/"} element={<ExerciseList />} />*/}
-		{/*<Route path="exercise" element={<ExerciseList />}>*/}
-		{/*	<Route path=":id" element={<Exercise />} />*/}
-		{/*</Route>*/}
-		{/*<Route exact path={"/workout"} element={<WorkoutList />} />*/}
-		{/*<Route path="/workout/:id" element={*/}
-		{/*	this.state.groupLiftsByExercise ?*/}
-		{/*		<LiftCollapsibleList /> : <LiftList />} />*/}
-		{/*<Route path="/lifts/:id" element={*/}
-		{/*	this.state.groupLiftsByExercise ?*/}
-		{/*		<LiftCollapsibleList /> : <LiftList />} />*/}
-		{/*<Route path="/continue-workout" element={<MostRecentWorkoutRedirect />} />*/}
-		{/*<Route path="/user-settings" element={<UserSettings />} />*/}
 	</Routes>
   </BrowserRouter>,
   document.getElementById('root')

@@ -1,10 +1,9 @@
-import { Button, InputGroup, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import React, { useState, useEffect } from 'react';
+import { Alert, Button, InputGroup, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+
 import TrainingProgramDataService from '../../services/training/training-program.service';
-import { useParams } from 'react-router-dom';
 
 export default function TrainingProgramModal(props) {
-	let params = useParams();
 	const [program, setProgram] = useState(props.program);
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
@@ -12,8 +11,26 @@ export default function TrainingProgramModal(props) {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        if (props.program) { setName(program.name); setDescription(program.description ? program.description : ""); setMode("edit"); }
-	}, [program]);
+        if (props.program) {
+            setName(program.name);
+            setDescription(program.description ? program.description : ""); setMode("edit");
+        }
+        else {
+            setName("");
+            setDescription("");
+        }
+	}, [props]);
+
+    const programPromptEnabled = () => {
+        if (name === '') {
+            return false;
+        }
+        else if (mode === "edit" && program.id <= 0) {
+            return false;
+        }
+
+        return true;
+    }
 
     const validateProgram = () =>
     {
@@ -92,10 +109,10 @@ export default function TrainingProgramModal(props) {
 					<Input placeholder="Name" onChange={e => setName(e.target.value)} value={name} />
 					<Input placeholder="Description" onChange={e => setDescription(e.target.value)} value={description} />
                 </InputGroup>
-                <p>{message}</p>
+                <Alert color="danger" isOpen={message !== ""}>{message}</Alert>
 			</ModalBody>
 			<ModalFooter>
-				<Button color='primary' onClick={() => execute()}>{props.modalPrompt}</Button>{' '}
+                <Button color='primary' disabled={!programPromptEnabled()} onClick={() => execute()}>{props.modalPrompt}</Button>{' '}
 				<Button color='secondary' onClick={props.toggle}>Cancel</Button>
 			</ModalFooter>
 			</Modal>

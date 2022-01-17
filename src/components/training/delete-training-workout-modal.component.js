@@ -1,10 +1,9 @@
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import React, { useState } from 'react';
+import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap';
+
 import TrainingWorkoutDataService from '../../services/training/training-workout.service';
-import { useParams } from 'react-router-dom';
 
 export default function DeleteTrainingWorkoutModal(props) {
-    let params = useParams();
     const [workout, setWorkout] = useState(props.workout);
 
     const execute = () => {
@@ -22,7 +21,7 @@ export default function DeleteTrainingWorkoutModal(props) {
             <ModalHeader toggle={props.toggle}>Delete Workout</ModalHeader>
             <ModalBody>
                 Are you sure you want to delete this workout?
-				</ModalBody>
+			</ModalBody>
             <ModalFooter>
                 <Button color='danger' onClick={() => execute()}>Yes, delete</Button>{' '}
                 <Button color='secondary' onClick={props.toggle}>Cancel</Button>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, InputGroup, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Alert, Button, Input, InputGroup, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+
 import WorkoutDataService from '../services/workout.service';
 
 export class WorkoutModal extends Component 
@@ -34,7 +35,15 @@ export class WorkoutModal extends Component
     componentDidMount() { this.setWorkoutId(this.props.workout ? this.props.workout.id: -1); }
 
     setWorkoutId(value) { this.setState({workoutId: value}); }
-    setDescription(value) { this.setState({description: value}); }
+    setDescription(value) { this.setState({ description: value }); }
+
+    enableWorkoutPrompt() {
+        if ((this.state.description === '')) {
+            return false;
+        }
+
+        return true;
+    }
 
     validateWorkout()
     {
@@ -106,11 +115,11 @@ export class WorkoutModal extends Component
 				<ModalBody>
 					<InputGroup>
 						<Input placeholder="Description" onChange={(e) => this.setDescription(`${e.target.value}`)} value={this.state.description}/>
-            		</InputGroup>
-					<p>{this.state.message}</p>
+                    </InputGroup>
+                    <Alert color="danger" isOpen={this.state.message !== ""}>{this.state.message}</Alert>
 				</ModalBody>
 				<ModalFooter>
-					<Button color='primary' onClick={() => this.execute()}>{this.props.modalPrompt}</Button>{' '}
+                    <Button color='primary' disabled={!this.enableWorkoutPrompt()} onClick={() => this.execute()}>{this.props.modalPrompt}</Button>{' '}
 					<Button color='secondary' onClick={this.props.toggle}>Cancel</Button>
 				</ModalFooter>
 			</Modal>

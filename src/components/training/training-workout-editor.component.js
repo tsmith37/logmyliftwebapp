@@ -1,31 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Button, ButtonGroup, Col, Container, Row, Table } from 'reactstrap';
+import { useParams } from 'react-router-dom';
+
 import TrainingLiftDataService from '../../services/training/training-lift.service';
 import TrainingProgramDataService from '../../services/training/training-program.service';
 import TrainingWorkoutDataService from '../../services/training/training-workout.service';
-import TrainingLiftModal from './training-lift-modal.component';
-import DeleteTrainingLiftModal from './delete-training-lift-modal.component';
-import StartTrainingLiftModal from './start-training-lift-modal.component';
-import StartTrainingWorkoutModal from './start-training-workout-modal.component';
-import { Button, ButtonGroup, Col, Container, Row, Table } from 'reactstrap';
-import JwPagination from 'jw-react-pagination';
-import { useNavigate, useParams } from 'react-router-dom';
 
-export default function TrainingWorkout() {
+import DeleteTrainingLiftModal from './delete-training-lift-modal.component';
+import TrainingLiftModal from './training-lift-modal.component';
+import TrainingWorkoutModal from './training-workout-modal.component';
+
+export default function TrainingWorkoutEditor() {
 	let params = useParams();
 	const [workoutId, setWorkoutId] = useState(params.id);
 	const [workout, setWorkout] = useState("workout");
 	const [program, setProgram] = useState("program");
 	const [lifts, setLifts] = useState([]);
-	const [pageOfLifts, setPageOfLifts] = useState([]);
 	const [activeLift, setActiveLift] = useState("");
-	const [startWorkoutModalOpen, setStartWorkoutModalOpen] = useState(false);
+	const [editWorkoutModalOpen, setEditWorkoutModalOpen] = useState(false);
 	const [createLiftModalOpen, setCreateLiftModalOpen] = useState(false);
 	const [editLiftModalOpen, setEditLiftModalOpen] = useState(false);
 	const [copyLiftModalOpen, setCopyLiftModalOpen] = useState(false);
 	const [deleteLiftModalOpen, setDeleteLiftModalOpen] = useState(false);
-	const [startLiftModalOpen, setStartLiftModalOpen] = useState(false);
 	const [expandedRows, setExpandedRows] = useState([]);
-	const navigate = useNavigate();
 
 	const retrieveWorkout = () => {
 		TrainingWorkoutDataService.get(params.id)
@@ -52,7 +49,6 @@ export default function TrainingWorkout() {
 		TrainingLiftDataService.findByWorkoutId(params.id)
 			.then(response => {
 				setLifts(response.data);
-				setPageOfLifts(response.data.slice(0, 10));
 			})
 			.catch(e => {
 				console.log(e);
@@ -62,7 +58,7 @@ export default function TrainingWorkout() {
 	const handleRowClick = (e, lift) => {
 		setActiveLift(lift);
 
-		if (e.target.value != "start") {
+		if (e.target.value != "up" && e.target.value != "down") {
 			const currentExpandedRows = expandedRows;
 			const isRowCurrentlyExpanded = currentExpandedRows.includes(lift.id);
 
@@ -81,7 +77,12 @@ export default function TrainingWorkout() {
 				<td>{lift.exercise ? lift.exercise.name : "Exercise"}</td>
 				<td>{lift.reps}</td>
 				<td>{lift.description}</td>			
-				<td><Button value="start" onClick={() => setStartLiftModalOpen(!startLiftModalOpen)}>Start</Button></td>
+				<td>
+					<ButtonGroup>
+						<Button value="down" disabled={lift.sequence === 1} onClick={() => move(lift, false)}>Down</Button>
+						<Button value="up" onClick={() => move(lift, true)}>Up</Button>
+					</ButtonGroup>
+				</td>
 			</tr>
 		];
 
@@ -99,22 +100,21 @@ export default function TrainingWorkout() {
 				onClick={() => setActiveLift(lift)}
 			>
 				<td>
-					<ButtonGroup>
-						<Button disabled={lift.sequence === 1} onClick={() => move(lift, false)}>Down</Button>
-						<Button onClick={() => move(lift, true)}>Up</Button>
-					</ButtonGroup>
+					<Button color='primary' onClick={() => setEditLiftModalOpen(!editLiftModalOpen)}>Edit</Button>{' '}
+					<Button color='secondary' onClick={() => setCopyLiftModalOpen(!copyLiftModalOpen)}>Copy</Button>{' '}
+					<Button color='danger' onClick={() => setDeleteLiftModalOpen(!deleteLiftModalOpen)}>Delete</Button>
 				</td>
-				<td><Button color='primary' onClick={() => setEditLiftModalOpen(!editLiftModalOpen)}>Edit</Button></td>
-				<td><Button color='secondary' onClick={() => setCopyLiftModalOpen(!copyLiftModalOpen)}>Copy</Button></td>
-				<td><Button color='danger' onClick={() => setDeleteLiftModalOpen(!deleteLiftModalOpen)}>Delete</Button></td>
-				<td/>
+				<td />
+				<td />
+				<td />
+				<td />
 			</tr>
 		)
     }
 
 	const renderRows = () => {
 		let allRows = [];
-		pageOfLifts.forEach(lift => {
+		lifts.forEach(lift => {
 			const liftRow = renderTrainingLift(lift);
 			allRows = allRows.concat(liftRow);
 		});
@@ -180,13 +180,9 @@ export default function TrainingWorkout() {
 			});
 	}
 
-	const redirectWorkout = (id) => {
-		navigate('/workout/' + id);
-	}
-
 	return (
 		<div>
-			<Container>
+			<Container fluid={true}>
 				<Row>
 					<Col xs="auto">
 						<h4>{program.name}</h4>
@@ -198,25 +194,21 @@ export default function TrainingWorkout() {
 					</Col>
 				</Row>
 			</Container>
-			<Container>
-				<Row>
-					<Col xs="2">
-						<Button color="primary" onClick={() => setStartWorkoutModalOpen(true)}>
-							Start
-						</Button>
-					</Col>
-					<Col xs="2">
-						<Button color="primary" onClick={() => setCreateLiftModalOpen(true)}>
-							Create
-						</Button>
-					</Col>
-					<Col xs="2">
-						<Button color="primary" onClick={() => fixSequence()}>
-							Sequence
-						</Button>
-					</Col>
-				</Row>
+			<Container fluid={true}>
+				<Button color="primary" onClick={() => setEditWorkoutModalOpen(true)}>Edit</Button>{' '}
+				<Button color="success" onClick={() => setCreateLiftModalOpen(true)}>Create</Button>{' '}
+				<Button color="info" onClick={() => fixSequence()}>Sequence</Button>
 			</Container>
+			<TrainingWorkoutModal
+				isModalOpen={editWorkoutModalOpen}
+				modalPrompt="Edit"
+				modalTitle="Edit Workout"
+				toggle={() => setEditWorkoutModalOpen(!editWorkoutModalOpen)}
+				onComplete={() => retrieveWorkout()}
+				workout={workout}
+				programId={program.id}
+				mode="edit"
+				key={"editWorkout"} />
 			<TrainingLiftModal
 				isModalOpen={createLiftModalOpen}
 				modalPrompt="Create"
@@ -252,21 +244,7 @@ export default function TrainingWorkout() {
 				onComplete={() => retrieveLifts()}
 				lift={activeLift}
 				key="deleteLift" />
-			<StartTrainingLiftModal
-				isModalOpen={startLiftModalOpen}
-				modalTitle="Start Lift"
-				toggle={() => setStartLiftModalOpen(!startLiftModalOpen)}
-				onComplete={() => { }}
-				trainingLift={activeLift}
-			/>
-			<StartTrainingWorkoutModal
-				isModalOpen={startWorkoutModalOpen}
-				modalTitle="Start Workout"
-				toggle={() => setStartWorkoutModalOpen(!startWorkoutModalOpen)}
-				onComplete={(e) => redirectWorkout(e)}
-				trainingWorkout={workout}
-				trainingProgram={program}
-			/>
+			<Container fluid={true}>
 			<Table hover>
 				<thead>
 					<tr>
@@ -274,14 +252,14 @@ export default function TrainingWorkout() {
 						<th>Exercise</th>
 						<th>Reps</th>
 						<th>Description</th>
-						<th></th>
+						<th>Move</th>
 					</tr>
 				</thead>
 				<tbody>
 					{renderRows()}
 				</tbody>
-			</Table>
-			<JwPagination items={lifts} onChangePage={data => setPageOfLifts(data)} />
+				</Table>
+			</Container>
 		</div>
 	)
 }

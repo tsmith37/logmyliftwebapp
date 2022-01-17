@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, InputGroup, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Alert, Button, InputGroup, Input, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
+
 import ExerciseDataService from '../services/exercise.service';
 
 export class ExerciseModal extends Component 
@@ -50,6 +51,14 @@ export class ExerciseModal extends Component
       }
 
       return true;
+    }
+
+    enableExercisePrompt() {
+        if ((this.state.name === '')) {
+            return false;
+        }
+
+        return true;
     }
 
     addExercise()
@@ -115,11 +124,11 @@ export class ExerciseModal extends Component
 					<InputGroup>     
 						<Input placeholder="Name" onChange={(e) => this.setName(`${e.target.value}`)} value={this.state.name}/>
 						<Input placeholder="Description" onChange={(e) => this.setDescription(`${e.target.value}`)} value={this.state.description}/>
-            		</InputGroup>
-					<p>{this.state.message}</p>
+                    </InputGroup>
+                    <Alert color="danger" isOpen={this.state.message !== ""}>{this.state.message}</Alert>
 				</ModalBody>
 				<ModalFooter>
-					<Button color='primary' onClick={() => this.execute()}>{this.props.modalPrompt}</Button>{' '}
+                    <Button disabled={!this.enableExercisePrompt()} color='primary' onClick={() => this.execute()}>{this.props.modalPrompt}</Button>{' '}
 					<Button color='secondary' onClick={this.props.toggle}>Cancel</Button>
 				</ModalFooter>
 			</Modal>

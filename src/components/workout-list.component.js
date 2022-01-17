@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import WorkoutDataService from '../services/workout.service';
-import { Link } from 'react-router-dom';
 import { Button, Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Table } from 'reactstrap'
-import { WorkoutModal } from './workout-modal.component';
-import { DeleteWorkoutModal } from './delete-workout-modal.component'
+import { Link } from 'react-router-dom';
 import JwPagination from 'jw-react-pagination';
+
+import WorkoutDataService from '../services/workout.service';
+
+import { DeleteWorkoutModal } from './delete-workout-modal.component';
+import { WorkoutModal } from './workout-modal.component';
 
 export default class WorkoutList extends Component {
 	constructor(props) {
@@ -128,33 +130,32 @@ export default class WorkoutList extends Component {
 
 		return (
 			<div>
+				<Container fluid={true}>
 				<div>
 					<h4>Workout List</h4>
 				</div>
-				<Container>
-					<Row>
-						<Col xs="auto">
-							<input
-								type="text"
-								className="form-control"
-								placeholder="Search by description"
-								value={searchDescription}
-								onChange={this.onChangeSearchDescription}
-							/>
-						</Col>
-						<Col xs="1">
-							<Dropdown isOpen={this.state.sortDropdownOpen} toggle={this.toggleSortDropdown}>
-							<DropdownToggle caret>
-								Sort
-							</DropdownToggle>
-							<DropdownMenu>
-								<DropdownItem onClick={this.selectNewToOldSort}>Newest to oldest</DropdownItem>
-								<DropdownItem onClick={this.selectOldToNewSort}>Oldest to newest</DropdownItem>
-							</DropdownMenu>
-							</Dropdown>
-						</Col>
-					</Row>
-				</Container>	
+				<Row>
+					<Col xs="auto">
+						<input
+							type="text"
+							className="form-control"
+							placeholder="Search by description"
+							value={searchDescription}
+							onChange={this.onChangeSearchDescription}
+						/>
+					</Col>
+					<Col xs="1">
+						<Dropdown isOpen={this.state.sortDropdownOpen} toggle={this.toggleSortDropdown}>
+						<DropdownToggle caret>
+							Sort
+						</DropdownToggle>
+						<DropdownMenu>
+							<DropdownItem onClick={this.selectNewToOldSort}>Newest to oldest</DropdownItem>
+							<DropdownItem onClick={this.selectOldToNewSort}>Oldest to newest</DropdownItem>
+						</DropdownMenu>
+						</Dropdown>
+					</Col>
+				</Row>
 				<WorkoutModal 
 					isModalOpen={this.state.showEditWorkoutModal} 
 					modalTitle="Edit Workout"
@@ -177,8 +178,8 @@ export default class WorkoutList extends Component {
 							<th>Description</th>
 							<th>Date</th>
 							<th>Time</th>
-							<th>Edit</th>
-							<th>Delete</th>
+							<th></th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -202,6 +203,7 @@ export default class WorkoutList extends Component {
 					</tbody>
 				</Table>
 				<JwPagination items={this.state.workouts} onChangePage={this.onChangePage} />
+				</Container>
 			</div>	
 		);
 	}
