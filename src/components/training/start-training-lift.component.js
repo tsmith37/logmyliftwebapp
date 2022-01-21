@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Button, Container, Form, Input, InputGroup, InputGroupText, Label } from 'reactstrap';
+import { Alert, Button, Col, Collapse, Container, Form, Input, InputGroup, InputGroupText, Label, Row, Table } from 'reactstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import LiftDataService from '../../services/lift.service';
@@ -23,9 +23,16 @@ export default function StartTrainingLift(props) {
     const [workoutDescription, setWorkoutDescription] = useState("");
     const [workoutStartTime, setWorkoutStartTime] = useState("");
 
+    const [totalLifts, setTotalLifts] = useState(1);
+
+    const [showExerciseLifts, setShowExerciseLifts] = useState(false);
+    const [exerciseLifts, setExerciseLifts] = useState([]);
+
     const navigate = useNavigate();
 
     useEffect(() => {
+        let isPlannedExerciseChange = (location.state.trainingLift.exerciseId !== trainingLift.exerciseId);
+
         setTrainingWorkout(location.state.trainingWorkout);
         setWorkoutId(location.state.workoutId);
         setTrainingLift(location.state.trainingLift);
@@ -35,7 +42,7 @@ export default function StartTrainingLift(props) {
 
         setReps(location.state.trainingLift ? location.state.trainingLift.reps : 0);
         setDescription(location.state.trainingLift ? location.state.trainingLift.description : "");
-        setExerciseId(location.state.trainingLift ? location.state.trainingLift.exerciseId : -1);
+        setExerciseId(isPlannedExerciseChange ? location.state.trainingLift.exerciseId : exerciseId);
         setMessage("");
     }, [location]);
 
@@ -49,6 +56,37 @@ export default function StartTrainingLift(props) {
                 console.log(e);
             });
     }, [workoutId]);
+
+    useEffect(() => {
+        findTotalLiftCount();
+    }, [trainingWorkout]);
+
+    useEffect(() => {
+        LiftDataService.findByExerciseId(exerciseId)
+            .then(response => {
+                setExerciseLifts(response.data.slice(0, 10));
+                setShowExerciseLifts(false);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }, [exerciseId])
+
+    const findTotalLiftCount = () => {
+        TrainingLiftDataService.findByWorkoutId(trainingWorkout.id)
+            .then(response => {
+                let trainingLifts = response.data;
+                if (trainingLifts) {
+                    setTotalLifts(Math.max.apply(Math, trainingLifts.map((x) => { return x.sequence; })));
+                }
+                else {
+                    setTotalLifts(0);
+                }
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
 
 
     const navigateNextTrainingLift = () => {
@@ -142,6 +180,34 @@ export default function StartTrainingLift(props) {
         navigate('/workout/' + workoutId);
     }
 
+    const renderRows = () => {
+        return (
+            <Table hover>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Weight</th>
+                        <th>Reps</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {exerciseLifts &&
+                        exerciseLifts.map((lift, index) => (
+                            <tr key={index}>
+                                <td>{new Date(lift.createdAt).toLocaleDateString()}</td>
+                                <td>{new Date(lift.createdAt).toLocaleTimeString()}</td>
+                                <td>{lift.weight}</td>
+                                <td>{lift.reps}</td>
+                                <td>{lift.description}</td>
+                            </tr>
+                        ))}
+                </tbody>
+            </Table>
+        );
+    }
+
     return (        
         <Container fluid={true}>
             <div>
@@ -168,9 +234,17 @@ export default function StartTrainingLift(props) {
                     </InputGroup>   
                     <br />
                     <Alert color="danger" isOpen={message !== ""}>{message}</Alert>
+                    <br />
+                    <p>{trainingLift.sequence} / {totalLifts}</p>
                     <Button color="primary" disabled={!liftAddEnabled()} onClick={() => createLift()}>Add</Button>{' '}
                     <Button color="secondary" onClick={() => skipLift()}>Skip</Button>{' '}
                     <Button color="danger" onClick={() => endWorkout()}>End</Button>
+                    <br />
+                    <br />
+                    <Button onClick={() => setShowExerciseLifts(!showExerciseLifts)}>View previous lifts for exercise</Button>
+                    <Collapse isOpen={showExerciseLifts}>
+                        {renderRows()}
+                    </Collapse>
                 </Form>
             </div>        
         </Container>

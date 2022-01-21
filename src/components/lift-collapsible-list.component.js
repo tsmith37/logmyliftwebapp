@@ -192,7 +192,7 @@ export default function LiftCollapsible()
 				<tbody>
 					{renderRows()}
 				</tbody>
-				</Table>
+			</Table>
 			</Container>
 		</div>
 	)
