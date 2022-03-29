@@ -11,6 +11,7 @@ export default function TrainingLiftModal(props) {
     const [workoutId, setWorkoutId] = useState(props.workoutId);
     const [sequence, setSequence] = useState(1);
     const [reps, setReps] = useState(0);
+    const [repeater, setRepeater] = useState(1);
     const [description, setDescription] = useState("");
     const [exerciseId, setExerciseId] = useState(-1);
     const [message, setMessage] = useState("");
@@ -63,22 +64,24 @@ export default function TrainingLiftModal(props) {
     }
 
     const createLift = () => {
-        var data =
-        {
-            trainingWorkoutId: workoutId,
-            sequence: sequence,
-            reps: reps,
-            description: description,
-            exerciseId: exerciseId
-        };
+        for (let rptr = 1; rptr <= repeater; rptr++) {
+            var data =
+            {
+                trainingWorkoutId: workoutId,
+                sequence: parseInt(sequence) + parseInt(rptr) - 1,
+                reps: reps,
+                description: description,
+                exerciseId: exerciseId
+            };
 
-        TrainingLiftDataService.create(data)
-            .then(response => {
-                props.onComplete();
-            })
-            .catch(e => {
-                console.log(e);
-            });
+            TrainingLiftDataService.create(data)
+                .then(response => {
+                    props.onComplete();
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
     }
 
     const editLift = () => {
@@ -136,6 +139,15 @@ export default function TrainingLiftModal(props) {
                     <InputGroupText>reps</InputGroupText>
                 </InputGroup>
                 <br />
+                {mode === "create" || mode === "copy" ?
+                    <InputGroup>
+                        <InputGroupText>Repeat</InputGroupText>
+                        <Input placeholder="x" min={0} max={9999} type="number" step="1" onChange={e => setRepeater(e.target.value)} value={repeater} />
+                        <InputGroupText>times</InputGroupText>
+                    </InputGroup>
+                    :
+                    ""
+                }
                 <Alert color="danger" isOpen={message !== ""}>{message}</Alert>
             </ModalBody>
             <ModalFooter>

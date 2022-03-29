@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Button, Col, Collapse, Container, Form, Input, InputGroup, InputGroupText, Label, Row, Table } from 'reactstrap';
+import { Alert, Button, Collapse, Container, Form, Input, InputGroup, InputGroupText, Label, Row, Table } from 'reactstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import LiftDataService from '../../services/lift.service';
@@ -31,17 +31,18 @@ export default function StartTrainingLift(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        let isPlannedExerciseChange = (location.state.trainingLift.exerciseId !== trainingLift.exerciseId);
+        let isPlannedExerciseChange = location.state.trainingLift && (location.state.trainingLift.exerciseId !== trainingLift.exerciseId);
 
         setTrainingWorkout(location.state.trainingWorkout);
         setWorkoutId(location.state.workoutId);
         setTrainingLift(location.state.trainingLift);
-        if (location.state.trainingLift && (location.state.trainingLift.exerciseId !== exerciseId)) {
+
+        if (isPlannedExerciseChange) {
             setWeight("");
         }
 
-        setReps(location.state.trainingLift ? location.state.trainingLift.reps : 0);
-        setDescription(location.state.trainingLift ? location.state.trainingLift.description : "");
+        setDescription(location.state.trainingLift.description)
+        setReps(location.state.trainingLift.reps);
         setExerciseId(isPlannedExerciseChange ? location.state.trainingLift.exerciseId : exerciseId);
         setMessage("");
     }, [location]);
@@ -88,6 +89,9 @@ export default function StartTrainingLift(props) {
             });
     }
 
+    const repeatTrainingLift = () => {
+        navigate('/training/workout/start', { state: { "workoutId": workoutId, "trainingWorkout": trainingWorkout, "trainingLift": trainingLift } });
+    }
 
     const navigateNextTrainingLift = () => {
         TrainingLiftDataService.findByWorkoutId(trainingWorkout.id)
@@ -126,6 +130,10 @@ export default function StartTrainingLift(props) {
         return true;
     }
 
+    const repeatLiftEnabled = () => {
+        return (liftAddEnabled && trainingLift);
+    }
+
     const validateLift = () => {
         if (!workoutId || workoutId <= 0) {
             setMessage('Workout is not properly loaded.');
@@ -151,7 +159,7 @@ export default function StartTrainingLift(props) {
         return true;
     }
 
-    const createLift = () => {
+    const createLift = (navigateFunction) => {
         if (!validateLift()) { return; }
 
         var data =
@@ -165,7 +173,7 @@ export default function StartTrainingLift(props) {
 
         LiftDataService.create(data)
             .then(response => {
-                navigateNextTrainingLift()
+                navigateFunction();
             })
             .catch(e => {
                 console.log(e);
@@ -216,8 +224,9 @@ export default function StartTrainingLift(props) {
                         <h4>{workoutDescription} - {new Date(workoutStartTime).toLocaleDateString()}</h4>
                     </Link>
                     <h5>Continue training...</h5>
-                    <ExerciseSelector getInputData={ex => setExerciseId(ex)} defaultExerciseId={trainingLift.exerciseId} />
-                    <br />
+                    <ExerciseSelector getInputData={ex => setExerciseId(ex)} defaultExerciseId={trainingLift ? trainingLift.exerciseId : -1} />
+                    <br/>
+                    <p>Training description: {trainingLift ? trainingLift.description : ""}</p>
                     <InputGroup>
                         <Input placeholder="Weight" min={0} max={9999} type="number" step="5" onChange={e => setWeight(e.target.value)} value={weight} />
                         <InputGroupText>lbs</InputGroupText>
@@ -227,17 +236,16 @@ export default function StartTrainingLift(props) {
                         <Input placeholder="Reps" min={0} max={9999} type="number" step="1" onChange={e => setReps(e.target.value)} value={reps} />
                         <InputGroupText>reps</InputGroupText>
                     </InputGroup>
-                    <br />
                     <Label for="description">Description</Label>
                     <InputGroup xs="auto">
-                        <Input id="description" placeholder="Workout description" onChange={e => setDescription(e.target.value)} value={description} />
-                    </InputGroup>   
-                    <br />
+                        <Input id="description" placeholder="Description" onChange={e => setDescription(e.target.value)} value={description} />
+                    </InputGroup>
                     <Alert color="danger" isOpen={message !== ""}>{message}</Alert>
                     <br />
                     <p>{trainingLift.sequence} / {totalLifts}</p>
-                    <Button color="primary" disabled={!liftAddEnabled()} onClick={() => createLift()}>Add</Button>{' '}
-                    <Button color="secondary" onClick={() => skipLift()}>Skip</Button>{' '}
+                    <Button color="success" disabled={!liftAddEnabled()} onClick={() => createLift(navigateNextTrainingLift)}>Add</Button>{' '}
+                    <Button color="warning" onClick={() => skipLift()}>Skip</Button>{' '}
+                    <Button color="primary" disabled={!repeatLiftEnabled()} onClick={() => createLift(repeatTrainingLift)}>Repeat</Button>{' '}
                     <Button color="danger" onClick={() => endWorkout()}>End</Button>
                     <br />
                     <br />

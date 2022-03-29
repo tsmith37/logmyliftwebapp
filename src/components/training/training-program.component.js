@@ -22,6 +22,7 @@ export default function TrainingProgram() {
 	const [deleteWorkoutModalOpen, setDeleteWorkoutModalOpen] = useState(false);
 	const [activeWorkout, setActiveWorkout] = useState("activeWorkout");
 	const [searchTerm, setSearchTerm] = useState("");
+	const [searchWeek, setSearchWeek] = useState("");
 	const [expandedRows, setExpandedRows] = useState([]);
 	const navigate = useNavigate();
 
@@ -40,7 +41,7 @@ export default function TrainingProgram() {
 	}
 
 	const retrieveWorkouts = () => {
-		TrainingWorkoutDataService.findByProgramId(params.id, searchTerm)
+		TrainingWorkoutDataService.findByProgramId(params.id, searchTerm, searchWeek)
 			.then(response => {
 				setWorkouts(response.data);
 				setPageOfWorkouts(response.data.slice(0, 10));
@@ -187,7 +188,7 @@ export default function TrainingProgram() {
 
 	useEffect(() => {
 		retrieveWorkouts();
-	}, [programId, searchTerm]);
+	}, [programId, searchTerm, searchWeek]);
 
 	return (
 		<div>
@@ -205,6 +206,15 @@ export default function TrainingProgram() {
 							placeholder="Search by name"
 							value={searchTerm}
 							onChange={e => setSearchTerm(e.target.value)}
+						/>
+					</Col>
+					<Col xs="auto">
+						<input
+							type="number"
+							className="form-control"
+							placeholder="Search by week"
+							value={searchWeek}
+							onChange={e => setSearchWeek(e.target.value)}
 						/>
 					</Col>
 					<Col xs="1">

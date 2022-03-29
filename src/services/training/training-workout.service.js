@@ -21,8 +21,8 @@ class TrainingWorkoutDataService {
 		return http.delete(`/training/workout/${id}`);
 	}
 
-	findByProgramId(programId, name = '') {
-		return http.get(`/training/workout?programId=${programId}&name=${name}`);
+	findByProgramId(programId, name = '', week = '') {
+		return http.get(`/training/workout?programId=${programId}&name=${name}&week=${week}`);
 	}
 }
 
