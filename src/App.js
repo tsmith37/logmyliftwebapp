@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate , NavLink } from 'react-router-dom';
 import { Nav, Navbar, NavbarBrand, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button } from 'reactstrap'
-import './App.css';
+// import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { ExerciseModal } from './components/exercise-modal.component';
+import ExerciseModal from './components/exercise-modal.component';
 import { WorkoutModal } from './components/workout-modal.component';
 
-export default function App() {
+function App() {
 	const [addExerciseModalOpen, setAddExerciseModalOpen] = useState(false);
 	const [addWorkoutModalOpen, setAddWorkoutModalOpen] = useState(false);
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 
-	const redirectWorkout = (id) => {
-		navigate('/workout/' + id);
-    }
+	// const redirectWorkout = (id) => {
+	// 	navigate('/workout/' + id);
+    // }
 
 	return (
 		<div>
@@ -33,7 +33,7 @@ export default function App() {
 					modalTitle="Add Workout"
 					modalPrompt="Create"
 					toggle={() => setAddWorkoutModalOpen(!addWorkoutModalOpen)} 
-					onComplete={(e) => redirectWorkout(e)}
+					// onComplete={(e) => redirectWorkout(e)}
 					key={"createWorkout"}/>	
 					<UncontrolledDropdown>
 						<DropdownToggle nav caret>
@@ -87,3 +87,5 @@ export default function App() {
 		</div>
 	)
 }
+
+export default App;

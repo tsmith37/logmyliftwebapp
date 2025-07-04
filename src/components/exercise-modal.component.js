@@ -3,7 +3,7 @@ import { Alert, Button, InputGroup, Input, Modal, ModalBody, ModalFooter, ModalH
 
 import ExerciseDataService from '../services/exercise.service';
 
-export class ExerciseModal extends Component 
+class ExerciseModal extends Component 
 {
     constructor(props) 
     {
@@ -135,3 +135,5 @@ export class ExerciseModal extends Component
 		);
 	}
 }
+
+export default ExerciseModal;

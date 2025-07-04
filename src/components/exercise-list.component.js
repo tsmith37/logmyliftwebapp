@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import { Button, Col, Container, Row, Table } from 'reactstrap'
+import React, { Component, useState } from 'react';
 import { Link } from 'react-router-dom';
-import JwPagination from 'jw-react-pagination';
+import { Row, Col, Table, Button } from 'reactstrap';
+// import JwPagination from 'jw-react-pagination';
 
 import ExerciseDataService from '../services/exercise.service';
 
-import { ExerciseModal } from './exercise-modal.component';
+import ExerciseModal from './exercise-modal.component';
 
-export default class ExerciseList extends Component {
+class ExerciseList extends Component {
 	constructor(props) {
 		super(props);
 		this.onChangeSearchName = this.onChangeSearchName.bind(this);
@@ -128,7 +128,7 @@ export default class ExerciseList extends Component {
 
 		return (
 			<div>
-				<Container fluid={true}>
+				{/* <Container fluid={true}> */}
 				<div>
 					<h4>Exercise List</h4>
 				</div>
@@ -148,7 +148,7 @@ export default class ExerciseList extends Component {
 						</Button>
 					</Col>
 				</Row>
-				<ExerciseModal 
+				{/* <ExerciseModal 
 					isModalOpen={this.state.showAddExerciseModal} 
 					modalPrompt="Create"
 					modalTitle="Add Exercise"
@@ -162,7 +162,7 @@ export default class ExerciseList extends Component {
 					toggle={this.toggleEditExerciseModal} 
 					exercise={this.state.currentExercise}
 					onComplete={this.closeEditExerciseModalAndRefresh}
-					key={"edit" + (this.state.currentExercise ? this.state.currentExercise.id : 0)}/>	
+					key={"edit" + (this.state.currentExercise ? this.state.currentExercise.id : 0)}/>	 */}
 				<Table hover>
 					<thead>
 						<tr>
@@ -190,9 +190,11 @@ export default class ExerciseList extends Component {
 						))}
 					</tbody>
 				</Table>
-				<JwPagination items={this.state.exercises} onChangePage={this.onChangePage} />
-				</Container>
+				{/* <JwPagination items={this.state.exercises} onChangePage={this.onChangePage} /> */}
+				{/* </Container> */}
 			</div>
 		);
 	}
 }
+
+export default ExerciseList;
